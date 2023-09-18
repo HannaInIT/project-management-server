@@ -1,8 +1,26 @@
-const express = require("express");
-const router = express.Router();
+const router = require("express").Router();
+const mongoose = require("mongoose");
 
-router.get("/", (req, res, next) => {
-  res.json("All good in here");
+const Task = require("../models/Task.model");
+const Project = require("../models/Project.model");
+
+//  POST /api/tasks  -  Creates a new task
+router.post("/tasks", (req, res, next) => {
+    const { title, description, projectId } = req.body;
+
+    const newTask = { 
+        title, 
+        description, 
+        project: projectId 
+    }
+
+    Task.create(newTask)
+        .then(newTask => {
+            return Project.findByIdAndUpdate(projectId, { $push: { tasks: newTask._id } });
+        })
+        .then(response => res.json(response))
+        .catch(err => res.json(err));
 });
+
 
 module.exports = router;

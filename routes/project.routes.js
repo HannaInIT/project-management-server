@@ -11,24 +11,34 @@ router.post("/projects", (req, res, next) => {
     const { title, description } = req.body;
 
     const newProject = {
-        title,
         description,
         tasks: []
     }
 
     Project.create(newProject)
         .then(response => res.json(response))
-        .catch(err => res.json(err));
+        .catch(err => {
+            console.log("Error creating new project...", err);
+            res.status(500).json({
+                message: "Error creating a new project",
+                error: err
+            });
+        });
 });
 
 
 // GET /api/projects -  Retrieves all of the projects
 router.get('/projects', (req, res, next) => {
     Project.find()
-        .then( response => {
-            console.log(response)
-        })
-        .catch(err => res.json(err));
+        .populate('tasks')
+        .then(allProjects => res.json(allProjects))
+        .catch(err => {
+            console.log("Error getting list of projects...", err);
+            res.status(500).json({
+                message: "Error getting list of projects",
+                error: err
+            });
+        });
 });
 
 

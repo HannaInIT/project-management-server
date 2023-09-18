@@ -19,7 +19,13 @@ router.post("/tasks", (req, res, next) => {
             return Project.findByIdAndUpdate(projectId, { $push: { tasks: newTask._id } });
         })
         .then(response => res.json(response))
-        .catch(err => res.json(err));
+        .catch(err => {
+            console.log("Error creating new t...", err);
+            res.status(500).json({
+                message: "Error creating a new project",
+                error: err
+            });
+        });
 });
 
 
