@@ -26,7 +26,13 @@ router.post("/tasks", (req, res, next) => {
                 error: err
             });
         });
-});
+            console.log("Error creating new task...", err);
+            res.status(500).json({
+                message: "Error creating a new task",
+                error: err
+            });
+        });
+
 
 
 module.exports = router;
